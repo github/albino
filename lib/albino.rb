@@ -41,14 +41,13 @@
 # Chris Wanstrath // chris@ozmm.org 
 #         GitHub // http://github.com
 #
-require 'open4'
-
 class Albino
-  @@bin = Rails.development? ? 'pygmentize' : '/usr/bin/pygmentize'
+  VERSION = '1.0'
 
-  def self.bin=(path)
-    @@bin = path
+  class << self
+    attr_accessor :bin
   end
+  self.bin = 'pygmentize'
 
   def self.colorize(*args)
     new(*args).colorize
@@ -60,14 +59,17 @@ class Albino
   end
 
   def execute(command)
-    pid, stdin, stdout, stderr = Open4.popen4(command)
-    stdin.puts @target
-    stdin.close
-    stdout.read.strip
+    output = ''
+    IO.popen(command, mode='r+') do |p|
+      p.write @target
+      p.close_write
+      output = p.read.strip
+    end
+    output
   end
 
   def colorize(options = {})
-    execute @@bin + convert_options(options)
+    execute bin + convert_options(options)
   end
   alias_method :to_s, :colorize
 
@@ -76,41 +78,8 @@ class Albino
       string + " -#{flag} #{value}"
     end
   end
-end
 
-if $0 == __FILE__
-  require 'rubygems'
-  require 'test/spec'
-  require 'mocha'
-  begin require 'redgreen'; rescue LoadError; end
-
-  context "Albino" do
-    setup do
-      @syntaxer = Albino.new(__FILE__, :ruby)
-    end
-
-    specify "defaults to text" do
-      syntaxer = Albino.new(__FILE__)
-      syntaxer.expects(:execute).with('pygmentize -f html -l text').returns(true)
-      syntaxer.colorize
-    end
-
-    specify "accepts options" do
-      @syntaxer.expects(:execute).with('pygmentize -f html -l ruby').returns(true)
-      @syntaxer.colorize
-    end
-
-    specify "works with strings" do
-      syntaxer = Albino.new('class New; end', :ruby)
-      assert_match %r(highlight), syntaxer.colorize
-    end
-
-    specify "aliases to_s" do
-      assert_equal @syntaxer.colorize, @syntaxer.to_s
-    end
-
-    specify "class method colorize" do
-      assert_equal @syntaxer.colorize, Albino.colorize(__FILE__, :ruby)
-    end
+  def bin
+    self.class.bin
   end
 end
