@@ -54,14 +54,14 @@ class Albino
   end
 
   def initialize(target, lexer = :text, format = :html)
-    @target  = File.exists?(target) ? File.read(target) : target rescue target
+    @target  = target
     @options = { :l => lexer, :f => format }
   end
 
   def execute(command)
     output = ''
     IO.popen(command, mode='r+') do |p|
-      p.write @target
+      write_target_to_stream(p)
       p.close_write
       output = p.read.strip
     end
@@ -76,6 +76,16 @@ class Albino
   def convert_options(options = {})
     @options.merge(options).inject('') do |string, (flag, value)|
       string + " -#{flag} #{value}"
+    end
+  end
+
+  def write_target_to_stream(stream)
+    if File.exists?(@target)
+      File.open(@target) do |f|
+        f.each { |l| stream << l }
+      end
+    else
+      stream << @target
     end
   end
 
