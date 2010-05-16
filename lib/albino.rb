@@ -80,10 +80,9 @@ class Albino
   end
 
   def write_target_to_stream(stream)
-    if File.exists?(@target)
-      File.open(@target) do |f|
-        f.each { |l| stream << l }
-      end
+    if @target.respond_to?(:read)
+      @target.each { |l| stream << l }
+      @target.close
     else
       stream << @target
     end

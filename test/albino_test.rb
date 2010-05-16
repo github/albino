@@ -6,11 +6,11 @@ require 'mocha'
 
 class AlbinoTest < Test::Unit::TestCase
   def setup
-    @syntaxer = Albino.new(__FILE__, :ruby)
+    @syntaxer = Albino.new(File.new(__FILE__), :ruby)
   end
 
   def test_defaults_to_text
-    syntaxer = Albino.new(__FILE__)
+    syntaxer = Albino.new(File.new(__FILE__))
     syntaxer.expects(:execute).with('pygmentize -f html -l text').returns(true)
     syntaxer.colorize
   end
@@ -33,16 +33,17 @@ class AlbinoTest < Test::Unit::TestCase
     Tempfile.open 'albino-test' do |tmp|
       tmp << contents
       tmp.flush
-      syntaxer = Albino.new(tmp.path, :ruby)
+      syntaxer = Albino.new(File.new(tmp.path), :ruby)
       assert_equal file_output, syntaxer.colorize
     end
   end
 
   def test_aliases_to_s
-    assert_equal @syntaxer.colorize, @syntaxer.to_s
+    syntaxer = Albino.new(File.new(__FILE__), :ruby)
+    assert_equal @syntaxer.colorize, syntaxer.to_s
   end
 
   def test_class_method_colorize
-    assert_equal @syntaxer.colorize, Albino.colorize(__FILE__, :ruby)
+    assert_equal @syntaxer.colorize, Albino.colorize(File.new(__FILE__), :ruby)
   end
 end
