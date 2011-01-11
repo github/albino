@@ -75,7 +75,7 @@ class Albino
 
   def convert_options(options = {})
     @options.merge(options).inject('') do |string, (flag, value)|
-      string + " -#{flag} #{shell_escape value}"
+      string + " -#{flag} \"#{shell_escape value}\""
     end
   end
 
@@ -89,7 +89,7 @@ class Albino
   end
 
   def shell_escape(str)
-    str.to_s.gsub("'", "\\\\'").gsub(";", '\\;')
+    str.to_s.gsub("\\", "\\\\").gsub("\"", "\\\"")
   end
 
   def bin
