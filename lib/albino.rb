@@ -45,7 +45,7 @@ require 'albino/process'
 class Albino
   class ShellArgumentError < ArgumentError; end
 
-  VERSION = '1.2.0'
+  VERSION = '1.2.1'
 
   class << self
     attr_accessor :bin
