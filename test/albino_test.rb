@@ -10,18 +10,18 @@ class AlbinoTest < Test::Unit::TestCase
   end
 
   def test_defaults_to_text
-    syntaxer = Albino.new(File.new(__FILE__))
-    syntaxer.expects(:execute).with("pygmentize -f 'html' -l 'text'").returns(true)
+    syntaxer = Albino.new('abc')
+    syntaxer.expects(:execute).with(%w(-l text -f html), {:timeout => 5}).returns true
     syntaxer.colorize
   end
 
   def test_accepts_options
-    @syntaxer.expects(:execute).with("pygmentize -f 'html' -l 'ruby'").returns(true)
+    @syntaxer.expects(:execute).with(%w(-l ruby -f html), {:timeout => 5}).returns true
     @syntaxer.colorize
   end
 
   def test_accepts_non_alpha_options
-    @syntaxer.expects(:execute).with("pygmentize -f 'html+c#-dump' -l 'ruby'").returns(true)
+    @syntaxer.expects(:execute).with(%w(-l ruby -f html+c#-dump), {:timeout => 5}).returns(true)
     @syntaxer.colorize(:f => 'html+c#-dump')
   end
 

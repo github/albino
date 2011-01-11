@@ -1,3 +1,4 @@
+require 'albino/process'
 ##
 # Wrapper for the Pygments command line tool, pygmentize.
 #
@@ -60,44 +61,46 @@ class Albino
     @options = { :l => lexer, :f => format }
   end
 
-  def execute(command)
-    output = ''
-    IO.popen(command, mode='r+') do |p|
-      write_target_to_stream(p)
-      p.close_write
-      output = p.read.strip
-    end
-    output
+  def execute(command, proc_options = {})
+    proc = Process.new([bin].push(*command), env={}, proc_options.merge(:input => write_target))
+    proc.out
   end
 
   def colorize(options = {})
-    execute bin + convert_options(options)
+    proc_options = {}
+    proc_options[:timeout] = options.delete(:timeout) || 5
+    execute convert_options(options), proc_options
   end
   alias_method :to_s, :colorize
 
   def convert_options(options = {})
-    @options.merge(options).inject('') do |memo, (flag, value)|
-      memo << shell_escape(flag.to_s, value.to_s)
+    @options.merge(options).inject([]) do |memo, (flag, value)|
+      validate_shell_args(flag.to_s, value.to_s)
+      memo << "-#{flag}" << value.to_s
     end
   end
 
-  def write_target_to_stream(stream)
+  def method_name
+
+  end
+
+  def write_target
     if @target.respond_to?(:read)
-      @target.each { |l| stream << l }
+      out = @target.read
       @target.close
+      out
     else
-      stream << @target
+      @target.to_s
     end
   end
 
-  def shell_escape(flag, value)
+  def validate_shell_args(flag, value)
     if flag !~ /^[a-z]+$/i
       raise ShellArgumentError, "Flag is invalid: #{flag.inspect}"
     end
     if value !~ /^[a-z\-\_\+\#\,\s]+$/i
       raise ShellArgumentError, "Flag value is invalid: -#{flag} #{value.inspect}"
     end
-    " -#{flag} '#{value}'"
   end
 
   def bin
