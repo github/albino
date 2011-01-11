@@ -11,13 +11,18 @@ class AlbinoTest < Test::Unit::TestCase
 
   def test_defaults_to_text
     syntaxer = Albino.new(File.new(__FILE__))
-    syntaxer.expects(:execute).with('pygmentize -f html -l text').returns(true)
+    syntaxer.expects(:execute).with("pygmentize -f 'html' -l 'text'").returns(true)
     syntaxer.colorize
   end
 
   def test_accepts_options
-    @syntaxer.expects(:execute).with('pygmentize -f html -l ruby').returns(true)
+    @syntaxer.expects(:execute).with("pygmentize -f 'html' -l 'ruby'").returns(true)
     @syntaxer.colorize
+  end
+
+  def test_accepts_non_alpha_options
+    @syntaxer.expects(:execute).with("pygmentize -f 'html+c#-dump' -l 'ruby'").returns(true)
+    @syntaxer.colorize(:f => 'html+c#-dump')
   end
 
   def test_works_with_strings
@@ -48,6 +53,8 @@ class AlbinoTest < Test::Unit::TestCase
   end
 
   def test_escaped_shell_args
-    assert_equal " -f html -l \\'abc\\;\\'", @syntaxer.convert_options(:l => "'abc;'")
+    assert_raises Albino::ShellArgumentError do
+      @syntaxer.convert_options(:l => "'abc;'")
+    end
   end
 end

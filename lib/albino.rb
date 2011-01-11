@@ -38,10 +38,12 @@
 #
 # To see all lexers and formatters available, run `pygmentize -L`.
 #
-# Chris Wanstrath // chris@ozmm.org 
+# Chris Wanstrath // chris@ozmm.org
 #         GitHub // http://github.com
 #
 class Albino
+  class ShellArgumentError < ArgumentError; end
+
   VERSION = '1.1.1'
 
   class << self
@@ -74,8 +76,8 @@ class Albino
   alias_method :to_s, :colorize
 
   def convert_options(options = {})
-    @options.merge(options).inject('') do |string, (flag, value)|
-      string + " -#{flag} #{shell_escape value}"
+    @options.merge(options).inject('') do |memo, (flag, value)|
+      memo << shell_escape(flag.to_s, value.to_s)
     end
   end
 
@@ -88,8 +90,14 @@ class Albino
     end
   end
 
-  def shell_escape(str)
-    str.to_s.gsub("'", "\\\\'").gsub(";", '\\;')
+  def shell_escape(flag, value)
+    if flag !~ /^[a-z]+$/i
+      raise ShellArgumentError, "Flag is invalid: #{flag.inspect}"
+    end
+    if value !~ /^[a-z\-\_\+\#\,\s]+$/i
+      raise ShellArgumentError, "Flag value is invalid: -#{flag} #{value.inspect}"
+    end
+    " -#{flag} '#{value}'"
   end
 
   def bin
