@@ -42,7 +42,7 @@
 #         GitHub // http://github.com
 #
 class Albino
-  VERSION = '1.1'
+  VERSION = '1.1.1'
 
   class << self
     attr_accessor :bin
