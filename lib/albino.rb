@@ -95,7 +95,7 @@ class Albino
     if flag !~ /^[a-z]+$/i
       raise ShellArgumentError, "Flag is invalid: #{flag.inspect}"
     end
-    if value !~ /^[a-z\-\_\+\#\,\s]+$/i
+    if value !~ /^[a-z0-9\-\_\+\#\,\s]+$/i
       raise ShellArgumentError, "Flag value is invalid: -#{flag} #{value.inspect}"
     end
   end
