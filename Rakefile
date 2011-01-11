@@ -79,7 +79,7 @@ task :release => :build do
   sh "git commit --allow-empty -a -m 'Release #{version}'"
   sh "git tag v#{version}"
   sh "git push origin master"
-  sh "git push v#{version}"
+  sh "git push --tags"
   sh "gem push pkg/#{name}-#{version}.gem"
 end
 
