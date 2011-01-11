@@ -11,18 +11,16 @@ class AlbinoTest < Test::Unit::TestCase
 
   def test_defaults_to_text
     syntaxer = Albino.new('abc')
-    syntaxer.expects(:execute).with(%w(-l text -f html), {:timeout => 5}).returns true
-    syntaxer.colorize
+    regex    = /span/
+    assert_no_match regex, syntaxer.colorize
   end
 
   def test_accepts_options
-    @syntaxer.expects(:execute).with(%w(-l ruby -f html), {:timeout => 5}).returns true
-    @syntaxer.colorize
+    assert_match /span/, @syntaxer.colorize
   end
 
   def test_accepts_non_alpha_options
-    @syntaxer.expects(:execute).with(%w(-l ruby -f html+c#-dump), {:timeout => 5}).returns(true)
-    @syntaxer.colorize(:f => 'html+c#-dump')
+    assert_equal '', @syntaxer.colorize(:f => 'html+c#-dump')
   end
 
   def test_works_with_strings

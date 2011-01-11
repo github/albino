@@ -61,15 +61,16 @@ class Albino
     @options = { :l => lexer, :f => format }
   end
 
-  def execute(command, proc_options = {})
-    proc = Process.new([bin].push(*command), env={}, proc_options.merge(:input => write_target))
-    proc.out
+  def execute(options = {})
+    proc_options = {}
+    proc_options[:timeout] = options.delete(:timeout) || 5
+    command = convert_options(options)
+    command.unshift(bin)
+    Process.new(command, env={}, proc_options.merge(:input => write_target))
   end
 
   def colorize(options = {})
-    proc_options = {}
-    proc_options[:timeout] = options.delete(:timeout) || 5
-    execute convert_options(options), proc_options
+    execute(options).out
   end
   alias_method :to_s, :colorize
 
@@ -78,10 +79,6 @@ class Albino
       validate_shell_args(flag.to_s, value.to_s)
       memo << "-#{flag}" << value.to_s
     end
-  end
-
-  def method_name
-
   end
 
   def write_target
