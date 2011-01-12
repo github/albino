@@ -48,17 +48,18 @@ class Albino
   VERSION = '1.2.2'
 
   class << self
-    attr_accessor :bin
+    attr_accessor :bin, :default_encoding, :timeout_threshold
   end
+  self.default_encoding = 'utf8'
   self.bin = 'pygmentize'
 
   def self.colorize(*args)
     new(*args).colorize
   end
 
-  def initialize(target, lexer = :text, format = :html)
+  def initialize(target, lexer = :text, format = :html, encoding = self.class.default_encoding)
     @target  = target
-    @options = { :l => lexer, :f => format }
+    @options = { :l => lexer, :f => format, :O => "encoding=#{encoding}" }
   end
 
   def execute(options = {})
