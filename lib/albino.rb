@@ -50,7 +50,9 @@ class Albino
   class << self
     attr_accessor :bin, :default_encoding, :timeout_threshold
   end
-  self.default_encoding = 'utf8'
+
+  self.timeout_threshold = 10
+  self.default_encoding  = 'utf8'
   self.bin = 'pygmentize'
 
   def self.colorize(*args)
@@ -64,7 +66,7 @@ class Albino
 
   def execute(options = {})
     proc_options = {}
-    proc_options[:timeout] = options.delete(:timeout) || 5
+    proc_options[:timeout] = options.delete(:timeout) || self.class.timeout_threshold
     command = convert_options(options)
     command.unshift(bin)
     Process.new(command, env={}, proc_options.merge(:input => write_target))
