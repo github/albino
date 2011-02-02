@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'albino'
 require 'rubygems'
 require 'test/unit'
@@ -45,6 +46,12 @@ class TestProcess < Test::Unit::TestCase
 
   def test_input
     input = "HEY NOW\n" * 100_000 # 800K
+    p = Albino::Process.new(['wc', '-l'], {}, :input => input)
+    assert_equal 100_000, p.out.strip.to_i
+  end
+  
+  def test_utf8_input
+    input = "smörgåsbord\n" * 100_000
     p = Albino::Process.new(['wc', '-l'], {}, :input => input)
     assert_equal 100_000, p.out.strip.to_i
   end

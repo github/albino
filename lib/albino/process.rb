@@ -158,16 +158,11 @@ class Albino
         # write to stdin stream
         ready[1].each do |fd|
           begin
-            boom = nil
-            size = fd.write_nonblock(input)
-            input = input[size, input.size]
-          rescue Errno::EPIPE => boom
-          rescue Errno::EAGAIN, Errno::EINTR
+            fd.write(input)
+          rescue Errno::EPIPE, Errno::EAGAIN, Errno::EINTR
           end
-          if boom || input.size == 0
-            stdin.close
-            writers.delete(stdin)
-          end
+          stdin.close
+          writers.delete(stdin)
         end
 
         # read from stdout and stderr streams
