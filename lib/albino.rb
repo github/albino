@@ -1,4 +1,5 @@
-require 'albino/process'
+require 'posix-spawn'
+
 ##
 # Wrapper for the Pygments command line tool, pygmentize.
 #
@@ -44,6 +45,7 @@ require 'albino/process'
 #
 class Albino
   class ShellArgumentError < ArgumentError; end
+  include POSIX::Spawn
 
   VERSION = '1.2.3'
 
@@ -69,7 +71,7 @@ class Albino
     proc_options[:timeout] = options.delete(:timeout) || self.class.timeout_threshold
     command = convert_options(options)
     command.unshift(bin)
-    Process.new(command, env={}, proc_options.merge(:input => write_target))
+    Child.new(*(command + [proc_options.merge(:input => write_target)]))
   end
 
   def colorize(options = {})

@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   ## require 'NAME.rb' or'/lib/NAME/file.rb' can be as require 'NAME/file.rb'
   s.require_paths = %w[lib]
 
+  s.add_dependency('posix-spawn')
   s.add_development_dependency('mocha')
 
   ## Leave this section as-is. It will be automatically generated from the
@@ -45,9 +46,7 @@ Gem::Specification.new do |s|
     Rakefile
     albino.gemspec
     lib/albino.rb
-    lib/albino/process.rb
     test/albino_test.rb
-    test/process_test.rb
   ]
   # = MANIFEST =
 
