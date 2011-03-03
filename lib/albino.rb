@@ -47,7 +47,7 @@ class Albino
   class ShellArgumentError < ArgumentError; end
   include POSIX::Spawn
 
-  VERSION = '1.2.3'
+  VERSION = '1.2.4.beta.1'
 
   class << self
     attr_accessor :bin, :default_encoding, :timeout_threshold
