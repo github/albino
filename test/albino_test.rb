@@ -25,6 +25,11 @@ class AlbinoTest < Test::Unit::TestCase
     assert_equal '', @syntaxer.colorize(:f => 'html+c#-dump')
   end
 
+  def test_markdown_compatible
+    code = Albino.colorize('1+2', :ruby)
+    assert_no_match %r{</pre></div>\Z}, code
+  end
+
   def test_works_with_strings
     syntaxer = Albino.new("class New\nend", :ruby)
     assert_match %r(highlight), code=syntaxer.colorize

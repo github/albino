@@ -15,6 +15,11 @@ class MultiTest < Test::Unit::TestCase
     assert_no_match regex, syntaxer.colorize
   end
 
+  def test_markdown_compatible
+    code = Albino::Multi.colorize('1+2', :ruby)
+    assert_no_match %r{</pre></div>\Z}, code
+  end
+
   def test_works_with_strings
     syntaxer = Albino::Multi.new("class New\nend", :ruby)
     assert_match %r(highlight), code=syntaxer.colorize

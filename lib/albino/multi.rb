@@ -82,8 +82,11 @@ class Albino
 
         memo << code << SEPARATOR
       end.join("")
+
       child  = Child.new(self.class.bin, options)
       pieces = child.out.split(SEPARATOR)
+      # markdown requires block elements on their own line
+      pieces.each{ |code| code.sub!(%r{</pre></div>\Z}, "</pre>\n</div>") }
       @multi ? pieces : pieces.first
     end
 

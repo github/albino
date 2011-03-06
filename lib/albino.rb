@@ -79,7 +79,10 @@ class Albino
   end
 
   def colorize(options = {})
-    execute(options).out
+    out = execute(options).out
+    # markdown requires block elements on their own line
+    out.sub!(%r{</pre></div>\Z}, "</pre>\n</div>")
+    out
   end
   alias_method :to_s, :colorize
 
