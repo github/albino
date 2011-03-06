@@ -1,3 +1,5 @@
+# coding: utf-8
+
 require 'rubygems'
 require 'albino'
 require 'test/unit'
@@ -27,6 +29,12 @@ class AlbinoTest < Test::Unit::TestCase
     syntaxer = Albino.new("class New\nend", :ruby)
     assert_match %r(highlight), code=syntaxer.colorize
     assert_match %(<span class="nc">New</span>\n), code
+  end
+
+  def test_works_with_utf8_strings
+    code = Albino.new("# é", :bash).colorize
+    assert_match %r(highlight), code
+    assert_match %r(<span class="c"># .*</span>), code
   end
 
   def test_works_with_files
