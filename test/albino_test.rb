@@ -39,7 +39,7 @@ class AlbinoTest < Test::Unit::TestCase
   def test_works_with_utf8_strings
     code = Albino.new("# é", :bash).colorize
     assert_match %r(highlight), code
-    assert_match %r(<span class="c"># .*</span>), code
+    assert_match %(<span class="c"># é</span>), code
   end
 
   def test_works_with_files
