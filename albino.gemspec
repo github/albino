@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'albino'
-  s.version           = '1.3.1'
+  s.version           = '1.3.2'
   s.date              = '2011-03-05'
   s.rubyforge_project = 'albino'
 
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   ## require 'NAME.rb' or'/lib/NAME/file.rb' can be as require 'NAME/file.rb'
   s.require_paths = %w[lib]
 
-  s.add_dependency('posix-spawn', '>= 0.3.2')
+  s.add_dependency('posix-spawn', '>= 0.3.3')
   s.add_development_dependency('mocha')
 
   ## Leave this section as-is. It will be automatically generated from the
