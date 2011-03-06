@@ -20,6 +20,13 @@ class MultiTest < Test::Unit::TestCase
     assert_no_match %r{</pre></div>\Z}, code
   end
 
+  def test_forces_utf8
+    code = Albino::Multi.colorize('1+2', :ruby)
+    if code.respond_to?(:encoding)
+      assert_equal 'UTF-8', code.encoding.to_s
+    end
+  end
+
   def test_works_with_strings
     syntaxer = Albino::Multi.new("class New\nend", :ruby)
     assert_match %r(highlight), code=syntaxer.colorize

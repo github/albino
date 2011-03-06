@@ -54,11 +54,19 @@ class Albino
   VERSION = '1.3.1'
 
   class << self
-    attr_accessor :bin, :default_encoding, :timeout_threshold
+    attr_accessor :bin, :timeout_threshold
+    attr_reader :default_encoding
+
+    def default_encoding=(encoding)
+      # make sure the encoding is valid
+      Encoding.find(encoding) if defined?(Encoding)
+
+      @default_encoding = encoding
+    end
   end
 
   self.timeout_threshold = 10
-  self.default_encoding  = 'utf8'
+  self.default_encoding  = 'utf-8'
   self.bin = 'pygmentize'
 
   def self.colorize(*args)
@@ -68,6 +76,7 @@ class Albino
   def initialize(target, lexer = :text, format = :html, encoding = self.class.default_encoding)
     @target  = target
     @options = { :l => lexer, :f => format, :O => "encoding=#{encoding}" }
+    @encoding = encoding
   end
 
   def execute(options = {})
@@ -80,8 +89,13 @@ class Albino
 
   def colorize(options = {})
     out = execute(options).out
+
     # markdown requires block elements on their own line
     out.sub!(%r{</pre></div>\Z}, "</pre>\n</div>")
+
+    # covert output to the encoding we told pygmentize to use
+    out.force_encoding(@encoding) if out.respond_to?(:force_encoding)
+
     out
   end
   alias_method :to_s, :colorize

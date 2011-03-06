@@ -84,9 +84,13 @@ class Albino
       end.join("")
 
       child  = Child.new(self.class.bin, options)
-      pieces = child.out.split(SEPARATOR)
-      # markdown requires block elements on their own line
-      pieces.each{ |code| code.sub!(%r{</pre></div>\Z}, "</pre>\n</div>") }
+      pieces = child.out.split(SEPARATOR).each do |code|
+        # markdown requires block elements on their own line
+        code.sub!(%r{</pre></div>\Z}, "</pre>\n</div>")
+
+        # albino::multi assumes utf8 encoding
+        code.force_encoding('UTF-8') if code.respond_to?(:force_encoding)
+      end
       @multi ? pieces : pieces.first
     end
 

@@ -55,6 +55,36 @@ class AlbinoTest < Test::Unit::TestCase
     end
   end
 
+  def test_default_encoding
+    assert_equal Albino.default_encoding, 'utf-8'
+  end
+
+  def test_change_encoding
+    before = Albino.default_encoding
+
+    assert_equal Albino.default_encoding, 'utf-8'
+    Albino.default_encoding = 'ascii'
+    assert_equal Albino.default_encoding, 'ascii'
+  ensure
+    Albino.default_encoding = before
+  end
+
+  def test_invalid_encoding
+    before = Albino.default_encoding
+    Albino.default_encoding = 'binary'
+
+    assert_equal Albino.colorize('class Baño; end', :ruby), ''
+  ensure
+    Albino.default_encoding = before
+  end
+
+  def test_custom_encoding
+    code = Albino.new('1+2', :ruby, :html, 'ascii').colorize
+    if code.respond_to?(:encoding)
+      assert_equal code.encoding.to_s, 'US-ASCII'
+    end
+  end
+
   def test_aliases_to_s
     syntaxer = Albino.new(File.new(__FILE__), :ruby)
     assert_equal @syntaxer.colorize, syntaxer.to_s
