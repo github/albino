@@ -10,7 +10,7 @@ require 'posix-spawn'
 #
 # Use like so:
 #
-#   @syntaxer = Albino.new('/some/file.rb', :ruby)
+#   @syntaxer = Albino.new('puts "Hello World"', :ruby)
 #   puts @syntaxer.colorize
 #
 # This'll print out an HTMLized, Ruby-highlighted version
@@ -18,12 +18,16 @@ require 'posix-spawn'
 #
 # To use another formatter, pass it as the third argument:
 #
-#   @syntaxer = Albino.new('/some/file.rb', :ruby, :bbcode)
+#   @syntaxer = Albino.new('puts "Hello World"', :ruby, :bbcode)
 #   puts @syntaxer.colorize
 #
 # You can also use the #colorize class method:
 #
-#   puts Albino.colorize('/some/file.rb', :ruby)
+#   puts Albino.colorize('puts "Hello World"', :ruby)
+#
+# To format a file, pass a file stream:
+#
+#   puts Albino.colorize(File.new('/some/file.rb'), :ruby)
 #
 # Another also: you get a #to_s, for somewhat nicer use in Rails views.
 #
