@@ -1,10 +1,6 @@
-require 'posix-spawn'
+require 'albino'
 
 class Albino
-  if !const_defined?(:ShellArgumentError)
-    class ShellArgumentError < ArgumentError; end
-  end
-
   # Wrapper for a custom multipygmentize script.  Passes multiple code
   # fragments in STDIN to Python.  This assumes both Python and pygments are
   # installed.
