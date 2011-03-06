@@ -19,7 +19,7 @@ For this and other extractions, see [http://github.com/github]()
 ### Advanced
 
     require 'albino'
-    @syntaxer = Albino.new('puts "Hello World"', :ruby, :bbcode)
+    @syntaxer = Albino.new(File.new('albino.rb'), :ruby, :bbcode)
     puts @syntaxer.colorize
 
 ### Multi
