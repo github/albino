@@ -73,7 +73,7 @@ class Albino
     new(*args).colorize
   end
 
-  def initialize(target, lexer = :text, format = :html, encoding = self.class.default_encoding, options)
+  def initialize(target, lexer = :text, format = :html, encoding = self.class.default_encoding, options = "")
     @target  = target
     @options = { :l => lexer, :f => format}
     if options
