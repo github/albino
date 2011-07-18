@@ -77,9 +77,9 @@ class Albino
     @target  = target
     @options = { :l => lexer, :f => format}
     if options
-      @options[:O] = "encoding=#{encoding}"+options
+      @options[:O] = "encoding=#{encoding},"+options
     else
-      @options[:O] = "encoding=#{encoding},linenos=table,lineanchors=line"
+      @options[:O] = "encoding=#{encoding}"
     end
     @encoding = encoding
   end
