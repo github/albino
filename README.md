@@ -22,6 +22,11 @@ For this and other extractions, see [http://github.com/github]()
     @syntaxer = Albino.new(File.new('albino.rb'), :ruby, :bbcode)
     puts @syntaxer.colorize
 
+## You can also include options for the parser
+
+    require 'albino'
+    Albino.colorize('puts "Hello World"', :ruby, :html, 'utf-8', "linenos=True")
+
 ### Multi
 
     require 'albino/multi'
