@@ -1,3 +1,5 @@
+# coding: utf-8
+
 require 'rubygems'
 require 'albino/multi'
 require 'test/unit'
@@ -25,6 +27,11 @@ class MultiTest < Test::Unit::TestCase
     if code.respond_to?(:encoding)
       assert_equal 'UTF-8', code.encoding.to_s
     end
+  end
+
+  def test_accepts_utf8
+    code = Albino::Multi.colorize('éøü', :html)
+    assert_includes code, "<pre>éøü\n</pre>"
   end
 
   def test_works_with_strings
