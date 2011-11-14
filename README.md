@@ -4,6 +4,8 @@ This project is an extraction from GitHub.
 
 For this and other extractions, see [http://github.com/github]()
 
+**Note**: This library is deprecated in favor of [pygments.rb](https://github.com/tmm1/pygments.rb).
+
 ## Installation
 
     sudo easy_install pygments
