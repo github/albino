@@ -1,10 +1,10 @@
+**NOTE: This repository is no longer supported or updated by GitHub. If you wish to continue to develop this code yourself, we recommend you fork it.**
+
 # Albino: a ruby wrapper for pygmentize
 
 This project is an extraction from GitHub.
 
 For this and other extractions, see [http://github.com/github]()
-
-**Note**: This library is deprecated in favor of [pygments.rb](https://github.com/tmm1/pygments.rb).
 
 ## Installation
 
