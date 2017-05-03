@@ -1,5 +1,7 @@
-require 'albino'
+# coding: utf-8
+
 require 'rubygems'
+require 'albino'
 require 'test/unit'
 require 'tempfile'
 require 'mocha'
@@ -23,9 +25,21 @@ class AlbinoTest < Test::Unit::TestCase
     assert_equal '', @syntaxer.colorize(:f => 'html+c#-dump')
   end
 
+  def test_markdown_compatible
+    code = Albino.colorize('1+2', :ruby)
+    assert_no_match %r{</pre></div>\Z}, code
+  end
+
   def test_works_with_strings
     syntaxer = Albino.new("class New\nend", :ruby)
-    assert_match %r(highlight), syntaxer.colorize
+    assert_match %r(highlight), code=syntaxer.colorize
+    assert_match %(<span class="nc">New</span>\n), code
+  end
+
+  def test_works_with_utf8_strings
+    code = Albino.new("# é", :bash).colorize
+    assert_match %r(highlight), code
+    assert_match %(<span class="c"># é</span>), code
   end
 
   def test_works_with_files
@@ -38,6 +52,36 @@ class AlbinoTest < Test::Unit::TestCase
       tmp.flush
       syntaxer = Albino.new(File.new(tmp.path), :ruby)
       assert_equal file_output, syntaxer.colorize
+    end
+  end
+
+  def test_default_encoding
+    assert_equal Albino.default_encoding, 'utf-8'
+  end
+
+  def test_change_encoding
+    before = Albino.default_encoding
+
+    assert_equal Albino.default_encoding, 'utf-8'
+    Albino.default_encoding = 'ascii'
+    assert_equal Albino.default_encoding, 'ascii'
+  ensure
+    Albino.default_encoding = before
+  end
+
+  def test_invalid_encoding
+    before = Albino.default_encoding
+    Albino.default_encoding = 'binary'
+
+    assert_equal Albino.colorize('class Baño; end', :ruby), ''
+  ensure
+    Albino.default_encoding = before
+  end
+
+  def test_custom_encoding
+    code = Albino.new('1+2', :ruby, :html, 'ascii').colorize
+    if code.respond_to?(:encoding)
+      assert_equal code.encoding.to_s, 'US-ASCII'
     end
   end
 
