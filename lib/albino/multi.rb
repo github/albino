@@ -1,10 +1,6 @@
-require 'posix-spawn'
+require 'albino'
 
 class Albino
-  if !const_defined?(:ShellArgumentError)
-    class ShellArgumentError < ArgumentError; end
-  end
-
   # Wrapper for a custom multipygmentize script.  Passes multiple code
   # fragments in STDIN to Python.  This assumes both Python and pygments are
   # installed.
@@ -86,8 +82,15 @@ class Albino
 
         memo << code << SEPARATOR
       end.join("")
+
       child  = Child.new(self.class.bin, options)
-      pieces = child.out.split(SEPARATOR)
+      pieces = child.out.split(SEPARATOR).each do |code|
+        # markdown requires block elements on their own line
+        code.sub!(%r{</pre></div>\Z}, "</pre>\n</div>")
+
+        # albino::multi assumes utf8 encoding
+        code.force_encoding('UTF-8') if code.respond_to?(:force_encoding)
+      end
       @multi ? pieces : pieces.first
     end
 

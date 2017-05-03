@@ -1,3 +1,5 @@
+# coding: utf-8
+
 require 'rubygems'
 require 'albino/multi'
 require 'test/unit'
@@ -13,6 +15,23 @@ class MultiTest < Test::Unit::TestCase
     syntaxer = Albino::Multi.new('abc')
     regex    = /span/
     assert_no_match regex, syntaxer.colorize
+  end
+
+  def test_markdown_compatible
+    code = Albino::Multi.colorize('1+2', :ruby)
+    assert_no_match %r{</pre></div>\Z}, code
+  end
+
+  def test_forces_utf8
+    code = Albino::Multi.colorize('1+2', :ruby)
+    if code.respond_to?(:encoding)
+      assert_equal 'UTF-8', code.encoding.to_s
+    end
+  end
+
+  def test_accepts_utf8
+    code = Albino::Multi.colorize('éøü', :html)
+    assert_includes code, "<pre>éøü\n</pre>"
   end
 
   def test_works_with_strings

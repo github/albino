@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'albino'
-  s.version           = '1.2.4.beta.1'
-  s.date              = '2011-03-03'
+  s.version           = '1.3.3'
+  s.date              = '2011-04-19'
   s.rubyforge_project = 'albino'
 
   ## Make sure your summary is short. The description may be as long
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   ## require 'NAME.rb' or'/lib/NAME/file.rb' can be as require 'NAME/file.rb'
   s.require_paths = %w[lib]
 
-  s.add_dependency('posix-spawn')
+  s.add_dependency('posix-spawn', '>= 0.3.6')
   s.add_development_dependency('mocha')
 
   ## Leave this section as-is. It will be automatically generated from the
@@ -41,12 +41,16 @@ Gem::Specification.new do |s|
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
   s.files = %w[
+    Gemfile
     LICENSE
-    README
+    README.md
     Rakefile
     albino.gemspec
     lib/albino.rb
+    lib/albino/multi.rb
     test/albino_test.rb
+    test/multi_albino_test.rb
+    vendor/multipygmentize
   ]
   # = MANIFEST =
 
