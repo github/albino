@@ -10,7 +10,7 @@ require 'posix-spawn'
 #
 # Use like so:
 #
-#   @syntaxer = Albino.new('/some/file.rb', :ruby)
+#   @syntaxer = Albino.new('puts "Hello World"', :ruby)
 #   puts @syntaxer.colorize
 #
 # This'll print out an HTMLized, Ruby-highlighted version
@@ -18,12 +18,16 @@ require 'posix-spawn'
 #
 # To use another formatter, pass it as the third argument:
 #
-#   @syntaxer = Albino.new('/some/file.rb', :ruby, :bbcode)
+#   @syntaxer = Albino.new('puts "Hello World"', :ruby, :bbcode)
 #   puts @syntaxer.colorize
 #
 # You can also use the #colorize class method:
 #
-#   puts Albino.colorize('/some/file.rb', :ruby)
+#   puts Albino.colorize('puts "Hello World"', :ruby)
+#
+# To format a file, pass a file stream:
+#
+#   puts Albino.colorize(File.new('/some/file.rb'), :ruby)
 #
 # Another also: you get a #to_s, for somewhat nicer use in Rails views.
 #
@@ -47,14 +51,22 @@ class Albino
   class ShellArgumentError < ArgumentError; end
   include POSIX::Spawn
 
-  VERSION = '1.2.4.beta.1'
+  VERSION = '1.3.3'
 
   class << self
-    attr_accessor :bin, :default_encoding, :timeout_threshold
+    attr_accessor :bin, :timeout_threshold
+    attr_reader :default_encoding
+
+    def default_encoding=(encoding)
+      # make sure the encoding is valid
+      Encoding.find(encoding) if defined?(Encoding)
+
+      @default_encoding = encoding
+    end
   end
 
   self.timeout_threshold = 10
-  self.default_encoding  = 'utf8'
+  self.default_encoding  = 'utf-8'
   self.bin = 'pygmentize'
 
   def self.colorize(*args)
@@ -64,6 +76,7 @@ class Albino
   def initialize(target, lexer = :text, format = :html, encoding = self.class.default_encoding)
     @target  = target
     @options = { :l => lexer, :f => format, :O => "encoding=#{encoding}" }
+    @encoding = encoding
   end
 
   def execute(options = {})
@@ -75,7 +88,15 @@ class Albino
   end
 
   def colorize(options = {})
-    execute(options).out
+    out = execute(options).out
+
+    # markdown requires block elements on their own line
+    out.sub!(%r{</pre></div>\Z}, "</pre>\n</div>")
+
+    # covert output to the encoding we told pygmentize to use
+    out.force_encoding(@encoding) if out.respond_to?(:force_encoding)
+
+    out
   end
   alias_method :to_s, :colorize
 
