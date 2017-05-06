@@ -1,5 +1,5 @@
-require 'albino'
 require 'rubygems'
+require 'albino'
 require 'test/unit'
 require 'tempfile'
 require 'mocha'
@@ -25,7 +25,8 @@ class AlbinoTest < Test::Unit::TestCase
 
   def test_works_with_strings
     syntaxer = Albino.new("class New\nend", :ruby)
-    assert_match %r(highlight), syntaxer.colorize
+    assert_match %r(highlight), code=syntaxer.colorize
+    assert_match %(<span class="nc">New</span>\n), code
   end
 
   def test_works_with_files

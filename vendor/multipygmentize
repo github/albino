@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+# This script allows you to highlight multiple chunks of code with a single
+# invocation. Expected input is on STDIN and takes the form of:
+#
+#   <lexer>\000<code>\000<lexer>\000<code>...
+#
+# where <lexer> is the shortname of a Pygments lexer and <code> is the source
+# code to be highlighted. Each lexer and code pair is separated with a NULL
+# byte and pairs of lexer/code are also separated with NULL bytes.
+#
+# Output is a list of highlighted code blocks separated by NULL bytes in the
+# same order in which they were received.
+
+import sys, os, codecs
+
+sys.stdout = codecs.getwriter('UTF-8')(sys.stdout)
+
+vpath = os.path.realpath(__file__).split("/")
+vpath.pop()
+vpath.pop()
+vpath = "/".join(vpath)
+
+from pygments import highlight
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters import HtmlFormatter
+
+parts = sys.stdin.read().split("\000")
+newparts = []
+
+for i in range(len(parts) / 2):
+    lang = parts[i * 2]
+    code = parts[i * 2 + 1]
+    try:
+        lexer = get_lexer_by_name(lang)
+    except:
+        lexer = get_lexer_by_name('text')
+    newparts.append([code, lexer])
+
+def hl(spec):
+    code = spec[0]
+    lexer = spec[1]
+    try:
+        return highlight(code, lexer, HtmlFormatter())
+    except:
+        lexer = get_lexer_by_name('text')
+        return highlight(code, lexer, HtmlFormatter())
+
+for spec in newparts:
+    sys.stdout.write(hl(spec))
+    sys.stdout.write("\000")
+
